@@ -1,9 +1,9 @@
 public class SequenceAlignment {
 
-    static Character[] x = {' ', 'a', 'c', 'a', 'g', 'a', 'a', 'g', 't', 'a'}; // 짧은 염기서열
+    static Character[] x = {' ', 'a', 'c', 'a', 'a', 'g', 't', 'a'}; // 짧은 염기서열
     static Character[] y = {' ', 'a', 'c', 't', 'g', 'a', 'g', 't', 't', 'a', 'a'}; // 긴 염기서열 (기준)
     //    static Character[] y = {' ','g','a','a','c','g'};
-//    static Character[] x = {' ','g','a','c','t'};
+    //    static Character[] x = {' ','g','a','c','t'};
     static int lx = x.length; // 공백을 직접 넣어줘 염기서열 길이+1
     static int ly = y.length; // 공백을 직접 넣어줘 염기서열 길이+1
 
@@ -80,6 +80,7 @@ public class SequenceAlignment {
 
             /* 비교할 염기서열 */
             int sameCount = 0; // 같은 max 값이 있을 경우 또 출력해주기 위함
+            int saveIdx=0, saveIdy=0;
             System.out.print("비교된 최적조합 : \t");
             int templx = lx - 1, temply = ly - 1;
             StringBuffer stringBuffer = new StringBuffer();
@@ -87,34 +88,36 @@ public class SequenceAlignment {
             while (templx > 0 && temply > 0) {
                 if (dataFrom[templx][temply] == 0) {
                     stringBuffer.append("  -");
-                    /* 다른 같은 max 값이 존재한다면 */
                     if (sameExist[templx][temply] != 0) {
-                        dataFrom[templx][temply] = sameExist[templx][temply];
-                        sameCount++;
-                        sameExist[templx][temply] = 0;
+                        saveIdx = templx;
+                        saveIdy = temply;
                     }
                     temply--;
                 } else if (dataFrom[templx][temply] == 1) {
                     stringBuffer.append("  " + x[templx]);
-                    /* 다른 같은 max 값이 존재한다면 */
                     if (sameExist[templx][temply] != 0) {
-                        dataFrom[templx][temply] = sameExist[templx][temply];
-                        sameCount++;
-                        sameExist[templx][temply] = 0;
+                        saveIdx = templx;
+                        saveIdy = temply;
                     }
                     templx--;
                     temply--;
                 } else if (dataFrom[templx][temply] == 2) {
                     stringBuffer.append("  " + x[templx]);
-                    /* 다른 같은 max 값이 존재한다면 */
                     if (sameExist[templx][temply] != 0) {
-                        dataFrom[templx][temply] = sameExist[templx][temply];
-                        sameCount++;
-                        sameExist[templx][temply] = 0;
+                        saveIdx = templx;
+                        saveIdy = temply;
                     }
                     templx--;
                 }
             }
+
+            /* 다른 같은 max 값이 존재한다면 */
+            if (sameExist[saveIdx][saveIdy] != 0) {
+                dataFrom[saveIdx][saveIdy] = sameExist[saveIdx][saveIdy];
+                sameCount++;
+                sameExist[saveIdx][saveIdy] = 0;
+            }
+
             System.out.println(stringBuffer.reverse());
             System.out.println("점수 : " + a[lx - 1][ly - 1] + "\n");
 
